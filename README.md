@@ -17,8 +17,8 @@ verify(pdfArrayBuffer, nodeUrl)
 
 ### Параметрүүд
 
-- **pdfArrayBuffer** нь pdf файлаа уншиж аваад ArrayBuffer төрөлд хөрвүүлсэн утга`
-- **nodeUrl** нь блокчэйний node-ий хаяг. Утга зааж өгөхгүй бол TEO-ийн public node рүү заана`
+- **pdfArrayBuffer** нь pdf файлаа уншиж аваад ArrayBuffer төрөлд хөрвүүлсэн утга
+- **nodeUrl** нь блокчэйний node-ий хаяг. Утга зааж өгөхгүй бол TEO-ийн public node рүү заана
 
 ### Гаралт
 
