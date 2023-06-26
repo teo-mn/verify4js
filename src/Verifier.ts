@@ -7,8 +7,6 @@ import {
   requestUniversityCertByHash,
 } from "./blockchainServices";
 import { jsonWrap } from "./jsonUtils";
-import { log } from "console";
-import { Certificate } from "crypto";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
@@ -21,7 +19,7 @@ const defaultMetadata: MetaDataInterface = {
     name: "",
     desc: "",
     certNum: "",
-    additionalInfo: "",     
+    additionalInfo: "",
   },
   version: "",
   blockchain: {
@@ -86,7 +84,7 @@ async function _validateInner(
   nodeUrl: string
 ) {
   let PDFHash = await extractHash(pdfString);
-  let isValid = true;  
+  let isValid = true;
   let result: VerifyResultInterface = { ...defaultResult, metadata: metadata };
   try {
     const isTestnet = metadata["blockchain"]["network"] !== "CorexMain";
@@ -128,13 +126,24 @@ async function _validateInner(
             result.state = "ISSUED";
           }
         }
+        Object.keys(certification).forEach(key => {
+          if (typeof certification[key] === 'bigint') {
+            certification[key] = certification[key].toString();
+          }
+        })
         result.cert = certification;
         try {
-          result.issuer = await requestIssuerByAddress(
+          const issuer = await requestIssuerByAddress(
             certification.issuer,
             isTestnet,
             nodeUrl
           );
+          Object.keys(issuer).forEach(key => {
+            if (typeof issuer[key] === 'bigint') {
+              issuer[key] = issuer[key].toString();
+            }
+          })
+          result.issuer = issuer;
           if (!isTestnet && !result.issuer.isActive) {
             isValid = false;
           }
