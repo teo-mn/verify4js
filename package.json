@@ -29,5 +29,10 @@
   ],
   "browser": {
     "crypto": false
+  },
+  "homepage": "https://github.com/teo-mn/verify4js#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/teo-mn/verify4js"
   }
 }
