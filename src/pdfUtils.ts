@@ -22,11 +22,21 @@ const StringToArrayBuffer = (str: string) => {
 const extractHash = async (pdfString: string) => {
   // Turn again into uintarray and calculate the hash
   const uint = StringToArrayBuffer(pdfString)
-  const crypto = window.crypto // TODO: use msrCrypto for IE11
-  if (!crypto) {
-    throw new Error('You are using an unsupported browser. Please use a modern browser like latest Chrome or Firefox.')
+  console.log("New Value: ", uint);
+  let digest;
+
+  if(typeof window !== 'undefined' && window.crypto){  
+     const crypto = window.crypto // TODO: use msrCrypto for IE11
+     digest = await crypto.subtle.digest('SHA-256', uint)
+     if (!crypto) {
+      throw new Error('You are using an unsupported browser. Please use a modern browser like latest Chrome or Firefox.')
+    }
   }
-  const digest = await crypto.subtle.digest('SHA-256', uint)
+  else{
+    const crypto = require("crypto")
+    digest = await crypto.createHash('sha256').update(new Uint8Array(uint)).digest();  
+  }
+ 
   return bytesToHex(new Uint8Array(digest))
 }
 

@@ -1,17 +1,19 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "target": "es6",
+    "module": "CommonJS",
     "declaration": true,
-    "outDir": "./lib",
+    "outDir": "dist",
     "strict": true,
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "baseUrl": "./",
+    "paths": {
+      "crypto": [
+        "node_modules/crypto-js"
+      ]
+    },
   },
-  "include": [
-    "src"
-  ],
-  "exclude": [
-    "node_modules",
-    "**/__tests__/*"
-  ]
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }
