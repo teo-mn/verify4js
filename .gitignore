@@ -1,3 +1,5 @@
+node_modules/
+lib/
 # Logs
 logs
 *.log
@@ -38,3 +40,7 @@ jspm_packages
 
 # Temp Word docs
 ._*.docx
+
+package.json
+yarn.lock
+package-lock.json

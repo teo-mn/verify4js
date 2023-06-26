@@ -1,5 +1,3 @@
-// @ts-ignore
-import allSettled from 'promise.allsettled';
 import Web3 from 'web3';
 // @ts-ignore
 import { abi as CertifyAbi } from './abi/certify';
@@ -8,9 +6,7 @@ import { abi as UniversityAbi } from './abi/university';
 // @ts-ignore
 import { abi as IssuerAbi } from './abi/issuer';
 
-allSettled.shim();
-
-export const DEFAULT_NODE_URL_TESTNET = 'https://node-testnet.teo.mn';
+export const DEFAULT_NODE_URL_TESTNET = 'https://node-testnet.teo.mn';  
 export const DEFAULT_NODE_URL = 'https://node.teo.mn';
 export const DEFAULT_ISSUER_ADDRESS_TESTNET = '0x9dca2a5a5412C32930d6CAf8DC1e6c7C2DCd3483';
 export const DEFAULT_ISSUER_ADDRESS = '0x824B721ceaf50e66281c905F0e79F3EE45D52613';

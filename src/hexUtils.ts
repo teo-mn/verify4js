@@ -1,5 +1,5 @@
 // @ts-ignore
-import {TextDecoder, TextEncoder} from 'text-encoding'
+import {TextDecoder, TextEncoder} from 'fast-text-encoding'
 
 const textToHex = (input: string) => {
   let byte = new TextEncoder().encode(input)
