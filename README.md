@@ -47,7 +47,7 @@ if (selectedFile) {
 
 ```
 const { verify } = require('verify4js');
-verify(pdfArrayBuffer, nodeUrl)
+verify(pdfArrayBuffer)
 .then(res => { // console.log(res); })
 .catch(err => { console.error(err.message); })
 ```
