@@ -27,7 +27,7 @@ if (selectedFile) {
     const reader = new FileReader(); 
     reader.onload = (e) => { 
       const view = new Int8Array(e.target.result); 
-      Verify.verify(view, "https://node.teo.mn")
+      Verify.verify(view)
         .then((res) => {
           console.log(res);
         })
