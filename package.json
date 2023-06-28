@@ -1,6 +1,6 @@
 {
   "name": "verify4js",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "",
   "main": "lib/Verifier.js",
   "types": "lib/Verifier.d.ts",

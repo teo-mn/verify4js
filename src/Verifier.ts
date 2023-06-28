@@ -90,6 +90,8 @@ async function _validateInner(
     const isTestnet = metadata["blockchain"]["network"] !== "CorexMain";
     result.isTestnet = isTestnet;
     const smartContractAddress = metadata.blockchain.smartContractAddress;
+
+    console.log('smart contract address: ', smartContractAddress);
     const version = metadata["version"];
     // @ts-ignore
     // const availableContracts = window.env.REACT_APP_AVAILABLE_CONTRACT_ADDRESSES;
@@ -109,8 +111,6 @@ async function _validateInner(
         isTestnet,
         nodeUrl
       );
-      console.log("Certifaction: ", certification);
-      console.log("PDFHash: ", PDFHash);
 
       if (certification.hash !== PDFHash) {
         isValid = false;
