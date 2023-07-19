@@ -4,10 +4,12 @@ PDF файлын Notly системээр блокчэйн дээр баталг
 ### Суулгах заавар
 
 npm-ээс татаж авч суулгах эсвэл шууд эх кодыг хуулж авч ашиглаж болно. <br/>
-```npm install verify4js```
+```shell
+npm install verify4js
+```
 
 ### Ашиглах заавар
-```
+```js
 import * as Verify from "verify4js";
 
 Verify.verify(pdfArrayBuffer, nodeUrl)
@@ -15,7 +17,7 @@ Verify.verify(pdfArrayBuffer, nodeUrl)
 .catch(err => { console.error(err.message); })
 ```
 #### Фронтэнд Жишээ:
-```
+```js
 <input type="file" name="file" onChange={handleFileChange} />
 
 function handleFileChange(event) {
@@ -45,7 +47,7 @@ if (selectedFile) {
 ```
 #### Backend жишээ:
 
-```
+```js
 const { verify } = require('verify4js');
 verify(pdfArrayBuffer)
 .then(res => { // console.log(res); })
@@ -59,7 +61,7 @@ verify(pdfArrayBuffer)
 
 ### Гаралт
 
-```
+```js
 export interface VerifyResultInterface { 
   state: 'REVOKED' | 'EXPIRED' | 'ISSUED' | 'APPROVE_PENDING' | 'INVALID',
   metadata: MetaDataInterface, 
