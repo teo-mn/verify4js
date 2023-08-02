@@ -5,6 +5,7 @@ import {
   requestCertificationByHash,
   requestIssuerByAddress,
   requestUniversityCertByHash,
+  requestCertificationByCertNum,
 } from "./blockchainServices";
 import { jsonWrap } from "./jsonUtils";
 
@@ -55,6 +56,86 @@ export const verify = async (
   let pdfString = ArrayBufferToString(pdfArrayBuffer);
 
   return _validateInner(issuerMeta, pdfString, nodeUrl);
+};
+
+export const verifyDiplomaMetaData = async (
+  jsonData: any,
+  nodeUrl: string = "https://node.teo.mn/",
+  smartContractAddress: string = "0xD882B76106d0Ba1a54DE30d620dC5c2892Ae1677"
+  ) => {
+    let certNum;
+    if (jsonData.DEGREE_NUMBER){
+      certNum = jsonData.DEGREE_NUMBER.toLowerCase();
+    }
+    else if(jsonData.degree_number){
+      certNum = jsonData.degree_number.toLowerCase();
+    }
+    let isValid = true;
+    let result: VerifyResultInterface = { 
+    ...defaultResult,
+    isTestnet: false,
+    isUniversity: true,
+    metadata: {...defaultMetadata, univ_meta: jsonData}
+  };
+  try {
+      const isTestnet = false;
+      const certification = await requestCertificationByCertNum(
+        certNum.toUpperCase(),
+        smartContractAddress,
+        isTestnet,
+        nodeUrl
+      );
+
+      const json = jsonWrap(jsonData);
+      const utf8 = require("utf8");
+      const x = utf8.encode(json);
+      const jsonHash = await extractHash(x);
+      if (certification.cert.metaHash.toLowerCase() !== jsonHash.toLowerCase()) {
+        isValid = false;
+      } else {
+        if (!certification.approveInfo.isApproved) {
+          result.state = "APPROVE_PENDING";
+        } else if (certification.revokeInfo.isRevoked) {
+          result.state = "REVOKED";
+        } else {
+          const expireDate = parseInt(certification.cert.expireDate) * 1000 || 0;
+          const now = new Date().getTime();
+          if (expireDate !== 0 && now > expireDate) {
+            result.state = "EXPIRED";
+          } else {
+            result.state = "ISSUED";
+          }
+        }
+        result.cert = certification.cert;
+        try {
+          const issuer = await requestIssuerByAddress(
+            certification.cert.issuer,
+            isTestnet,
+            nodeUrl
+          );
+          Object.keys(issuer).forEach(key => {
+            if (typeof issuer[key] === 'bigint') {
+              issuer[key] = issuer[key].toString();
+            }
+          })
+          result.issuer = issuer;
+          if (!isTestnet && !result.issuer.isActive) {
+            isValid = false;
+          }
+        } catch (e) {
+          isValid = false;
+          console.error(e);
+        }
+      }
+    
+  } catch (e) {
+    console.error(e);
+    throw new Error("Баталгаажуулах явцад алдаа гарлаа.");
+  }
+  if (!isValid) {
+    result.state = "INVALID";
+  }
+  return result;
 };
 
 const availableContracts: string[] = [
