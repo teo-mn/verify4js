@@ -38,3 +38,15 @@ export const requestUniversityCertByHash = async (hash: string, contractAddress:
     cert, revokeInfo, approveInfo
   };
 };
+
+export const requestCertificationByCertNum = async (certNum: string, contractAddress: string, isTestnet: boolean, nodeUrl: string) => {
+  const url = nodeUrl || (isTestnet ? DEFAULT_NODE_URL_TESTNET : DEFAULT_NODE_URL);
+  const client = new Web3(url);
+  const contract = new client.eth.Contract(UniversityAbi, client.utils.toChecksumAddress(contractAddress));
+  const cert = await contract.methods.getCertificationByCertNum(certNum).call();
+  const revokeInfo = await contract.methods.getRevokeInfo(cert.hash).call();
+  const approveInfo = await contract.methods.getApproveInfo(cert.hash).call();
+  return {
+    cert, revokeInfo, approveInfo
+  };
+};
