@@ -59,11 +59,14 @@ export const verify = async (
 };
 
 export const verifyDiplomaMetaData = async (
-  jsonData: any,
+  jsonData: {
+    DEGREE_NUMBER: string,
+    degree_number: string,
+  },
   nodeUrl: string = "https://node.teo.mn/",
   smartContractAddress: string = "0xD882B76106d0Ba1a54DE30d620dC5c2892Ae1677"
   ) => {
-    let certNum;
+    let certNum: string = '';
     if (jsonData.DEGREE_NUMBER){
       certNum = jsonData.DEGREE_NUMBER.toLowerCase();
     }
