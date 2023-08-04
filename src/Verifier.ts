@@ -60,8 +60,18 @@ export const verify = async (
 
 export const verifyDiplomaMetaData = async (
   jsonData: {
-    DEGREE_NUMBER: string,
-    degree_number: string,
+    DEGREE_NUMBER?: string,
+    degree_number?: string,
+    PRIMARY_IDENTIFIER_NUMBER?: any,
+    INSTITUTION_ID?: any,
+    INSTITUTION_NAME?: any,
+    EDUCATION_LEVEL_NAME?: any,
+    EDUCATION_FIELD_CODE?: any,
+    EDUCATION_FIELD_NAME?: any,
+    TOTAL_GPA?: any,
+    LAST_NAME?: any,
+    FIRST_NAME?: any,
+    CONFER_YEAR_NAME?: any,
   },
   nodeUrl: string = "https://node.teo.mn/",
   smartContractAddress: string = "0xD882B76106d0Ba1a54DE30d620dC5c2892Ae1677"
@@ -89,9 +99,9 @@ export const verifyDiplomaMetaData = async (
         nodeUrl
       );
 
-      const json = jsonWrap(jsonData);
+      const wrappedJson = jsonWrap(jsonData);
       const utf8 = require("utf8");
-      const x = utf8.encode(json);
+      const x = utf8.encode(wrappedJson);
       const jsonHash = await extractHash(x);
       if (certification.cert.metaHash.toLowerCase() !== jsonHash.toLowerCase()) {
         isValid = false;
