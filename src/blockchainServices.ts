@@ -50,3 +50,10 @@ export const requestCertificationByCertNum = async (certNum: string, contractAdd
     cert, revokeInfo, approveInfo
   };
 };
+
+export const requestCertifyCertificationByCertNum = async (certNum: string, contractAddress: string, isTestnet: boolean, nodeUrl: string) => {
+  const url = nodeUrl || (isTestnet ? DEFAULT_NODE_URL_TESTNET : DEFAULT_NODE_URL);
+  const client = new Web3(url);
+  const contract = new client.eth.Contract(CertifyAbi, client.utils.toChecksumAddress(contractAddress));
+  return await contract.methods.getCertificationByCertNum(certNum).call();
+};
