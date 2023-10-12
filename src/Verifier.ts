@@ -6,6 +6,7 @@ import {
   requestIssuerByAddress,
   requestUniversityCertByHash,
   requestCertificationByCertNum,
+  requestCertifyCertificationByCertNum,
 } from "./blockchainServices";
 import { jsonWrap } from "./jsonUtils";
 
@@ -150,6 +151,81 @@ export const verifyDiplomaMetaData = async (
   }
   return result;
 };
+
+
+export const verifyJsonMetaData = async (
+  jsonData: {
+    [key: string]: string;
+  },
+  nodeUrl: string = "https://node.teo.mn/",
+  smartContractAddress: string = "0x5d305D8423c0f07bEaf15ba6a5264e0c88fC41B4",
+  isTestnet: boolean = false
+) => {
+  let isValid = true;
+  let result: VerifyResultInterface = {
+  ...defaultResult,
+    isTestnet: isTestnet,
+    isUniversity: false,
+    metadata: {...defaultMetadata, data: jsonData}
+  }
+  try {
+    const wrappedJson = jsonWrap(jsonData);
+    const utf8 = require("utf8");
+    const x = utf8.encode(wrappedJson);
+    const jsonHash = await extractHash(x);
+
+    const certification = await requestCertifyCertificationByCertNum(
+      jsonHash,
+      smartContractAddress,
+      isTestnet,
+      nodeUrl
+    );
+    
+    if (certification.certNum.toLowerCase() !== jsonHash.toLowerCase()) {
+        isValid = false;
+    } else {
+      if (certification.isRevoked) {
+        result.state = "REVOKED";
+      } else {
+        const expireDate = parseInt(certification.expireDate) * 1000 || 0;
+        const now = new Date().getTime();
+        if (expireDate !== 0 && now > expireDate) {
+          result.state = "EXPIRED";
+        } else {
+          result.state = "ISSUED";
+        }
+      }
+      result.cert = certification;
+      try {
+        const issuer = await requestIssuerByAddress(
+          certification.issuer,
+          isTestnet,
+          nodeUrl
+        );
+        Object.keys(issuer).forEach(key => {
+          if (typeof issuer[key] === 'bigint') {
+            issuer[key] = issuer[key].toString();
+          }
+        })
+        result.issuer = issuer;
+        if (!isTestnet && !result.issuer.isActive) {
+          isValid = false;
+        }
+      } catch (e) {
+        isValid = false;
+        console.error(e);
+      }
+    }
+
+  } catch (e) {
+    console.error(e);
+    throw new Error("Баталгаажуулах явцад алдаа гарлаа.");
+  }
+  if (!isValid) {
+    result.state = "INVALID";
+  }
+  return result;
+}
 
 const availableContracts: string[] = [
   "0x5d305D8423c0f07bEaf15ba6a5264e0c88fC41B4",
