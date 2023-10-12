@@ -158,17 +158,17 @@ export const verifyJsonMetaData = async (
     [key: string]: string;
   },
   nodeUrl: string = "https://node.teo.mn/",
-  smartContractAddress: string = "0x5d305D8423c0f07bEaf15ba6a5264e0c88fC41B4"
+  smartContractAddress: string = "0x5d305D8423c0f07bEaf15ba6a5264e0c88fC41B4",
+  isTestnet: boolean = false
 ) => {
   let isValid = true;
   let result: VerifyResultInterface = {
   ...defaultResult,
-    isTestnet: false,
+    isTestnet: isTestnet,
     isUniversity: false,
     metadata: {...defaultMetadata}
   }
   try {
-    const isTestnet = false;
     const wrappedJson = jsonWrap(jsonData);
     const utf8 = require("utf8");
     const x = utf8.encode(wrappedJson);
