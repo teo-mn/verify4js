@@ -28,6 +28,9 @@ export interface MetaDataInterface {
         TOTAL_GPA?: number,
     } & {
         [key: string]: string
+    },
+    data?: {
+        [key: string]: string,
     }
 }
 

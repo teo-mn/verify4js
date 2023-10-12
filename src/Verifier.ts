@@ -166,7 +166,7 @@ export const verifyJsonMetaData = async (
   ...defaultResult,
     isTestnet: isTestnet,
     isUniversity: false,
-    metadata: {...defaultMetadata}
+    metadata: {...defaultMetadata, data: jsonData}
   }
   try {
     const wrappedJson = jsonWrap(jsonData);
