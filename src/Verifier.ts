@@ -6,8 +6,8 @@ import {
   requestIssuerByAddress,
   requestUniversityCertByHash,
   requestCertificationByCertNum,
-  requestCertifyCertificationByCertNum,
-} from "./blockchainServices";
+  requestCertifyCertificationByCertNum, requestQrCode
+} from './blockchainServices';
 import { jsonWrap } from "./jsonUtils";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
@@ -150,6 +150,73 @@ export const verifyDiplomaMetaData = async (
     result.state = "INVALID";
   }
   return result;
+};
+
+export const verifyDiplomaQrData = async (
+    qrData: {
+      [key: string]: string;
+    },
+    nodeUrl: string = 'https://node.teo.mn/',
+    smartContractAddress: string = '0xD882B76106d0Ba1a54DE30d620dC5c2892Ae1677',
+    isTestnet: boolean = false) => {
+  let certNum: string = '';
+  let isValid = true;
+  if (qrData.DEGREE_NUMBER) {
+    certNum = qrData.DEGREE_NUMBER.toLowerCase();
+  } else if (qrData.degree_number) {
+    certNum = qrData.degree_number.toLowerCase();
+  }
+
+  let result: VerifyResultInterface = {
+    ...defaultResult,
+    isTestnet: isTestnet,
+    isUniversity: false,
+    metadata: { ...defaultMetadata, data: qrData }
+  };
+
+  const wrappedJson = jsonWrap(qrData);
+  const utf8 = require('utf8');
+  const x = utf8.encode(wrappedJson);
+  const jsonHash = await extractHash(x);
+  const res = await requestQrCode(
+      certNum.toUpperCase(),
+      smartContractAddress,
+      isTestnet,
+      nodeUrl
+  );
+  result.cert = res.cert;
+
+  if (res.hash === jsonHash) {
+    result.state = 'ISSUED';
+
+    try {
+      const issuer = await requestIssuerByAddress(
+          res.cert.issuer,
+          isTestnet,
+          nodeUrl
+      );
+      Object.keys(issuer).forEach(key => {
+        if (typeof issuer[key] === 'bigint') {
+          issuer[key] = issuer[key].toString();
+        }
+      });
+      result.issuer = issuer;
+      if (!isTestnet && !result.issuer.isActive) {
+        isValid = false;
+      }
+    } catch (e) {
+      isValid = false;
+      console.error(e);
+    }
+
+  } else {
+    result.state = 'INVALID';
+  }
+  if (!isValid) {
+    result.state = 'INVALID';
+  }
+  return result;
+
 };
 
 

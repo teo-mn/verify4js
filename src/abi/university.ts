@@ -37,6 +37,19 @@ module.exports = {
           {
             "indexed": false,
             "internalType": "address",
+            "name": "addr",
+            "type": "address"
+          }
+        ],
+        "name": "ApproverAddressAdded",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": false,
+            "internalType": "address",
             "name": "oldAddr",
             "type": "address"
           },
@@ -62,23 +75,11 @@ module.exports = {
           {
             "indexed": false,
             "internalType": "address",
-            "name": "to",
+            "name": "addr",
             "type": "address"
-          },
-          {
-            "indexed": false,
-            "internalType": "uint256",
-            "name": "value",
-            "type": "uint256"
-          },
-          {
-            "indexed": false,
-            "internalType": "uint256",
-            "name": "timestamp",
-            "type": "uint256"
           }
         ],
-        "name": "CreditCharged",
+        "name": "ApproverAddressRemoved",
         "type": "event"
       },
       {
@@ -99,7 +100,7 @@ module.exports = {
           {
             "indexed": false,
             "internalType": "string",
-            "name": "imageHash",
+            "name": "metaHash",
             "type": "string"
           },
           {
@@ -192,6 +193,74 @@ module.exports = {
         ],
         "name": "Revoked",
         "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "internalType": "string",
+            "name": "certNum",
+            "type": "string"
+          },
+          {
+            "indexed": false,
+            "internalType": "string",
+            "name": "qrDataHash",
+            "type": "string"
+          }
+        ],
+        "name": "UpdatedQrCodeData",
+        "type": "event"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "string",
+            "name": "_hash",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_imageHash",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_metaHash",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_certNum",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "_expireDate",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "_desc",
+            "type": "string"
+          },
+          {
+            "internalType": "bytes",
+            "name": "signature",
+            "type": "bytes"
+          }
+        ],
+        "name": "addApprovedCertification",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "nonpayable",
+        "type": "function"
       },
       {
         "inputs": [
@@ -377,24 +446,6 @@ module.exports = {
           }
         ],
         "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "inputs": [
-          {
-            "internalType": "address",
-            "name": "addr",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "credit",
-            "type": "uint256"
-          }
-        ],
-        "name": "chargeCredit",
-        "outputs": [],
-        "stateMutability": "payable",
         "type": "function"
       },
       {
@@ -634,72 +685,44 @@ module.exports = {
       {
         "inputs": [
           {
-            "internalType": "address",
-            "name": "issuer",
-            "type": "address"
+            "internalType": "string",
+            "name": "_metaHash",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_certNum",
+            "type": "string"
           }
         ],
-        "name": "getIssuer",
+        "name": "getMetaCertNumHash",
         "outputs": [
           {
-            "components": [
-              {
-                "internalType": "uint256",
-                "name": "id",
-                "type": "uint256"
-              },
-              {
-                "internalType": "string",
-                "name": "name",
-                "type": "string"
-              },
-              {
-                "internalType": "string",
-                "name": "regnum",
-                "type": "string"
-              },
-              {
-                "internalType": "string",
-                "name": "description",
-                "type": "string"
-              },
-              {
-                "internalType": "string",
-                "name": "category",
-                "type": "string"
-              },
-              {
-                "internalType": "address",
-                "name": "addr",
-                "type": "address"
-              },
-              {
-                "internalType": "string",
-                "name": "metaDataUrl",
-                "type": "string"
-              },
-              {
-                "internalType": "bool",
-                "name": "isActive",
-                "type": "bool"
-              },
-              {
-                "internalType": "uint256",
-                "name": "createdAt",
-                "type": "uint256"
-              },
-              {
-                "internalType": "uint256",
-                "name": "updatedAt",
-                "type": "uint256"
-              }
-            ],
-            "internalType": "struct SharedStructs.Issuer",
+            "internalType": "bytes32",
             "name": "",
-            "type": "tuple"
+            "type": "bytes32"
           }
         ],
-        "stateMutability": "view",
+        "stateMutability": "pure",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "string",
+            "name": "_certNum",
+            "type": "string"
+          }
+        ],
+        "name": "getQrCodeData",
+        "outputs": [
+          {
+            "internalType": "string",
+            "name": "",
+            "type": "string"
+          }
+        ],
+        "stateMutability": "nonpayable",
         "type": "function"
       },
       {
@@ -771,6 +794,25 @@ module.exports = {
         "name": "initialize",
         "outputs": [],
         "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "name": "isApprover",
+        "outputs": [
+          {
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "stateMutability": "view",
         "type": "function"
       },
       {
@@ -864,6 +906,38 @@ module.exports = {
         "type": "function"
       },
       {
+        "inputs": [
+          {
+            "internalType": "string",
+            "name": "",
+            "type": "string"
+          }
+        ],
+        "name": "qrDataMap",
+        "outputs": [
+          {
+            "internalType": "string",
+            "name": "",
+            "type": "string"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "_addr",
+            "type": "address"
+          }
+        ],
+        "name": "removeApprover",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
         "inputs": [],
         "name": "renounceOwnership",
         "outputs": [],
@@ -936,6 +1010,19 @@ module.exports = {
         "inputs": [
           {
             "internalType": "address",
+            "name": "_addr",
+            "type": "address"
+          }
+        ],
+        "name": "setApprover",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
             "name": "_approverAddress",
             "type": "address"
           }
@@ -949,13 +1036,60 @@ module.exports = {
         "inputs": [
           {
             "internalType": "address",
-            "name": "_issuerRegistrationAddress",
+            "name": "_creditAddress",
             "type": "address"
           }
         ],
-        "name": "setIssuerRegistrationAddress",
+        "name": "setCreditAddress",
         "outputs": [],
         "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "string",
+            "name": "_certNum",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_qrDataHash",
+            "type": "string"
+          }
+        ],
+        "name": "setQrCodeData",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "bytes",
+            "name": "sig",
+            "type": "bytes"
+          }
+        ],
+        "name": "splitSignature",
+        "outputs": [
+          {
+            "internalType": "bytes32",
+            "name": "r",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "s",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint8",
+            "name": "v",
+            "type": "uint8"
+          }
+        ],
+        "stateMutability": "pure",
         "type": "function"
       },
       {

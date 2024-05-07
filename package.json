@@ -1,6 +1,6 @@
 {
   "name": "verify4js",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "",
   "main": "lib/Verifier.js",
   "types": "lib/Verifier.d.ts",
@@ -21,7 +21,7 @@
     "fast-text-encoding": "^1.0.6",
     "pdfjs-dist": "^3.7.107",
     "utf8": "^3.0.0",
-    "web3": "^4.0.1",
+    "web3": "^4.8.0",
     "ws": "^8.13.0"
   },
   "files": [

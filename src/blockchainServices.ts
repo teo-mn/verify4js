@@ -1,4 +1,4 @@
-import Web3 from 'web3';
+import Web3, { EventLog } from 'web3';
 // @ts-ignore
 import { abi as CertifyAbi } from './abi/certify';
 // @ts-ignore
@@ -6,7 +6,7 @@ import { abi as UniversityAbi } from './abi/university';
 // @ts-ignore
 import { abi as IssuerAbi } from './abi/issuer';
 
-export const DEFAULT_NODE_URL_TESTNET = 'https://node-testnet.teo.mn';  
+export const DEFAULT_NODE_URL_TESTNET = 'https://node-testnet.teo.mn';
 export const DEFAULT_NODE_URL = 'https://node.teo.mn';
 export const DEFAULT_ISSUER_ADDRESS_TESTNET = '0x9dca2a5a5412C32930d6CAf8DC1e6c7C2DCd3483';
 export const DEFAULT_ISSUER_ADDRESS = '0x824B721ceaf50e66281c905F0e79F3EE45D52613';
@@ -56,4 +56,29 @@ export const requestCertifyCertificationByCertNum = async (certNum: string, cont
   const client = new Web3(url);
   const contract = new client.eth.Contract(CertifyAbi, client.utils.toChecksumAddress(contractAddress));
   return await contract.methods.getCertificationByCertNum(certNum).call();
+};
+
+export const requestQrCode = async (certNum: string, contractAddress: string, isTestnet: boolean, nodeUrl: string) => {
+  const url = nodeUrl || (isTestnet ? DEFAULT_NODE_URL_TESTNET : DEFAULT_NODE_URL);
+  const client = new Web3(url);
+  const contract = new client.eth.Contract(UniversityAbi, client.utils.toChecksumAddress(contractAddress));
+  const hash = await contract.methods.getQrCodeData(certNum).call();
+  const res = await contract.getPastEvents('UpdatedQrCodeData', {
+    filter: { certNum: certNum },
+    fromBlock: 0,
+    toBlock: 'latest'
+  });
+  if (res.length > 0) {
+    const pastEvent = res[res.length -1] as EventLog;
+    const tx = await client.eth.getTransactionReceipt(pastEvent.transactionHash || '');
+    const block = await client.eth.getBlock(tx.blockNumber);
+    return {
+      hash: hash,
+      cert: {issuer: tx.from, createdAt: block.timestamp, expireDate: 0, txid: pastEvent.transactionHash as string}
+    };
+  }
+  return {
+    hash: hash,
+    cert: {issuer: ''}
+  };
 };
